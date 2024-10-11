@@ -1,0 +1,492 @@
+<html>
+ <head>
+  <link crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" rel="stylesheet"/>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+  <style>
+   body {
+            background-color: #f0f4f7;
+        }
+        .sidebar {
+            background-color: #fff;
+            padding: 20px;
+            height: 100vh;
+        }
+        .sidebar .nav-link {
+            color: #000;
+            font-weight: bold;
+        }
+        .sidebar .nav-link.active {
+            color: #007bff;
+        }
+        .sidebar .nav-link i {
+            margin-right: 10px;
+        }
+        .sidebar .user-info {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .sidebar .user-info img {
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+        }
+        .sidebar .user-info .name {
+            font-weight: bold;
+        }
+        .sidebar .user-info .email {
+            color: #888;
+        }
+        .sidebar .btn-upgrade {
+            margin-top: 20px;
+            width: 100%;
+        }
+        .content {
+            padding: 20px;
+        }
+        .content .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .content .header .search-box {
+            width: 200px;
+        }
+        .content .header .user-name {
+            display: flex;
+            align-items: center;
+        }
+        .content .header .user-name i {
+            margin-left: 10px;
+        }
+        .content .section-title {
+            font-weight: bold;
+            margin-top: 20px;
+        }
+        .content .tabs {
+            margin-top: 10px;
+        }
+        .content .tabs .nav-link {
+            color: #000;
+        }
+        .content .tabs .nav-link.active {
+            color: #007bff;
+            font-weight: bold;
+        }
+        .content .card {
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 10px;
+        }
+        .content .card .card-title {
+            font-weight: bold;
+        }
+        .content .card .card-date {
+            color: #888;
+        }
+        .content .card .card-options {
+            text-align: right;
+        }
+        .content .card .card-options i {
+            color: #888;
+            cursor: pointer;
+        }
+        .content .card.new-card {
+            border: 2px dashed #888;
+            text-align: center;
+            color: #888;
+            cursor: pointer;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5);
+            padding-top: 60px;
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 30%;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e5e5e5;
+            padding-bottom: 10px;
+        }
+        .modal-body {
+            padding-top: 10px;
+        }
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            border-top: 1px solid #e5e5e5;
+            padding-top: 10px;
+        }
+  </style>
+ </head>
+ <body>
+  <div id="emailModal" class="modal">
+   <div class="modal-content">
+    <div class="modal-header">
+     <h2>Enter your email to continue</h2>
+     <span class="close" onclick="closeModal()">&times;</span>
+    </div>
+    <div class="modal-body">
+     <input type="email" id="userEmail" class="form-control" placeholder="Enter your email" required>
+    </div>
+    <div class="modal-footer">
+     <button class="btn btn-primary" onclick="submitEmail()">Submit</button>
+    </div>
+   </div>
+  </div>
+  <div class="container-fluid">
+   <div class="row">
+    <div class="col-md-2 sidebar">
+     <div class="d-flex align-items-center mb-4">
+      <div class="dot bg-primary rounded-circle" style="width: 10px; height: 10px;">
+      </div>
+      <span class="ms-2">
+       MINO
+      </span>
+     </div>
+     <nav class="nav flex-column">
+      <a class="nav-link active" href="#" onclick="addNewNote()">
+       <i class="fas fa-plus-circle">
+       </i>
+       Add new
+      </a>
+      <a class="nav-link" href="#" onclick="showArchive()">
+       <i class="fas fa-archive">
+       </i>
+       Archive
+      </a>
+      <a class="nav-link" href="#" onclick="showDeleted()">
+       <i class="fas fa-trash-alt">
+       </i>
+       Deleted
+      </a>
+      <a class="nav-link" href="#" onclick="showTrash()">
+       <i class="fas fa-trash">
+       </i>
+       Trash
+      </a>
+     </nav>
+     <div class="user-info">
+      <img alt="User profile picture" height="50" src="https://storage.googleapis.com/a1aa/image/HGVDYCOe5wW7JyZ5vSTovHCEiKnLeXNbAyI11lbdiBZKqglTA.jpg" width="50"/>
+      <div class="name">
+       User Name
+      </div>
+      <div class="email">
+       user@example.com
+      </div>
+     </div>
+     <button class="btn btn-primary btn-upgrade" onclick="upgradePlan()">
+      Upgrade plan
+     </button>
+    </div>
+    <div class="col-md-10 content">
+     <div class="header">
+      <h1>
+       MY NOTES
+      </h1>
+      <div class="d-flex align-items-center">
+       <input class="form-control search-box" placeholder="Search" type="text"/>
+       <div class="user-name ms-3">
+        Supri mahendi
+        <i class="fas fa-user-circle">
+        </i>
+       </div>
+      </div>
+     </div>
+     <div class="section-title">
+      Recent Folders
+     </div>
+     <div class="tabs">
+      <nav class="nav nav-pills">
+       <a class="nav-link active" href="#">
+        Today
+       </a>
+       <a class="nav-link" href="#">
+        This Week
+       </a>
+       <a class="nav-link" href="#">
+        This Month
+       </a>
+      </nav>
+     </div>
+     <div class="row" id="recent-folders">
+      <div class="col-md-3">
+       <div class="card" style="background-color: #e3f2fd;">
+        <div class="d-flex justify-content-between">
+         <div class="card-title">
+          Movie Review
+         </div>
+         <div class="card-options">
+          <i class="fas fa-ellipsis-h" onclick="showOptions(this)">
+          </i>
+         </div>
+        </div>
+        <div class="card-date">
+         Yesterday
+        </div>
+       </div>
+      </div>
+      <div class="col-md-3">
+       <div class="card" style="background-color: #ffebee;">
+        <div class="d-flex justify-content-between">
+         <div class="card-title">
+          Class Notes
+         </div>
+         <div class="card-options">
+          <i class="fas fa-ellipsis-h" onclick="showOptions(this)">
+          </i>
+         </div>
+        </div>
+        <div class="card-date">
+         Yesterday
+        </div>
+       </div>
+      </div>
+      <div class="col-md-3">
+       <div class="card" style="background-color: #fff9c4;">
+        <div class="d-flex justify-content-between">
+         <div class="card-title">
+          Book Lists
+         </div>
+         <div class="card-options">
+          <i class="fas fa-ellipsis-h" onclick="showOptions(this)">
+          </i>
+         </div>
+        </div>
+        <div class="card-date">
+         Yesterday
+        </div>
+       </div>
+      </div>
+      <div class="col-md-3">
+       <div class="card new-card" onclick="addNewFolder()">
+        <div>
+         + New Folder
+        </div>
+       </div>
+      </div>
+     </div>
+     <div class="section-title">
+      My Notes
+     </div>
+     <div class="tabs">
+      <nav class="nav nav-pills">
+       <a class="nav-link active" href="#">
+        Today
+       </a>
+       <a class="nav-link" href="#">
+        This Week
+       </a>
+       <a class="nav-link" href="#">
+        This Month
+       </a>
+      </nav>
+     </div>
+     <div class="row" id="my-notes">
+      <div class="col-md-3">
+       <div class="card" style="background-color: #fff9c4;">
+        <div class="d-flex justify-content-between">
+         <div class="card-title">
+          Book Lists
+         </div>
+         <div class="card-options">
+          <i class="fas fa-ellipsis-h" onclick="showOptions(this)">
+          </i>
+         </div>
+        </div>
+        <div class="card-date">
+         Yesterday
+        </div>
+       </div>
+      </div>
+      <div class="col-md-3">
+       <div class="card" style="background-color: #ffebee;">
+        <div class="d-flex justify-content-between">
+         <div class="card-title">
+          Class Notes
+         </div>
+         <div class="card-options">
+          <i class="fas fa-ellipsis-h" onclick="showOptions(this)">
+          </i>
+         </div>
+        </div>
+        <div class="card-date">
+         Yesterday
+        </div>
+       </div>
+      </div>
+      <div class="col-md-3">
+       <div class="card" style="background-color: #e3f2fd;">
+        <div class="d-flex justify-content-between">
+         <div class="card-title">
+          Movie Review
+         </div>
+         <div class="card-options">
+          <i class="fas fa-ellipsis-h" onclick="showOptions(this)">
+          </i>
+         </div>
+        </div>
+        <div class="card-date">
+         Yesterday
+        </div>
+       </div>
+      </div>
+      <div class="col-md-3">
+       <div class="card new-card" onclick="addNewNote()">
+        <div>
+         + New Note
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+   </div>
+  </div>
+  <script>
+   let notes = [];
+        let archivedNotes = [];
+        let deletedNotes = [];
+        let trashedNotes = [];
+
+        function addNewFolder() {
+            const folderName = prompt("Enter folder name:");
+            if (folderName) {
+                const folderCard = document.createElement("div");
+                folderCard.className = "col-md-3";
+                folderCard.innerHTML = `
+                    <div class="card" style="background-color: #e3f2fd;">
+                        <div class="d-flex justify-content-between">
+                            <div class="card-title">${folderName}</div>
+                            <div class="card-options"><i class="fas fa-ellipsis-h" onclick="showOptions(this)"></i></div>
+                        </div>
+                        <div class="card-date">Today</div>
+                    </div>
+                `;
+                document.getElementById("recent-folders").appendChild(folderCard);
+            }
+        }
+
+        function addNewNote() {
+            const noteName = prompt("Enter note name:");
+            if (noteName) {
+                const noteCard = document.createElement("div");
+                noteCard.className = "col-md-3";
+                noteCard.innerHTML = `
+                    <div class="card" style="background-color: #e3f2fd;">
+                        <div class="d-flex justify-content-between">
+                            <div class="card-title">${noteName}</div>
+                            <div class="card-options"><i class="fas fa-ellipsis-h" onclick="showOptions(this)"></i></div>
+                        </div>
+                        <div class="card-date">Today</div>
+                    </div>
+                `;
+                document.getElementById("my-notes").appendChild(noteCard);
+                notes.push(noteCard);
+            }
+        }
+
+        function showOptions(element) {
+            const options = document.createElement("div");
+            options.className = "options";
+            options.innerHTML = `
+                <div onclick="archiveNote()">Archive</div>
+                <div onclick="deleteNote()">Delete</div>
+                <div onclick="trashNote()">Trash</div>
+            `;
+            element.parentElement.appendChild(options);
+        }
+
+        function archiveNote() {
+            const note = event.target.closest(".col-md-3");
+            archivedNotes.push(note);
+            note.remove();
+        }
+
+        function deleteNote() {
+            const note = event.target.closest(".col-md-3");
+            deletedNotes.push(note);
+            note.remove();
+        }
+
+        function trashNote() {
+            const note = event.target.closest(".col-md-3");
+            trashedNotes.push(note);
+            note.remove();
+        }
+
+        function showArchive() {
+            document.getElementById("my-notes").innerHTML = "";
+            archivedNotes.forEach(note => {
+                document.getElementById("my-notes").appendChild(note);
+            });
+        }
+
+        function showDeleted() {
+            document.getElementById("my-notes").innerHTML = "";
+            deletedNotes.forEach(note => {
+                document.getElementById("my-notes").appendChild(note);
+            });
+        }
+
+        function showTrash() {
+            document.getElementById("my-notes").innerHTML = "";
+            trashedNotes.forEach(note => {
+                document.getElementById("my-notes").appendChild(note);
+            });
+        }
+
+        function upgradePlan() {
+            alert("Upgrade plan feature is not implemented yet.");
+        }
+
+        function submitEmail() {
+            const email = document.getElementById("userEmail").value;
+            if (email) {
+                localStorage.setItem("userEmail", email);
+                closeModal();
+            } else {
+                alert("Please enter a valid email.");
+            }
+        }
+
+        function closeModal() {
+            document.getElementById("emailModal").style.display = "none";
+        }
+
+        window.onload = function() {
+            const userEmail = localStorage.getItem("userEmail");
+            if (!userEmail) {
+                document.getElementById("emailModal").style.display = "block";
+            }
+        }
+  </script>
+ </body>
+</html>
